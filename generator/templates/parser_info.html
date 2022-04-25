@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <article>
+    {% if xpaths %}
+        <h3>XPaths:</h3>
+    {% for xpath in xpaths %}
+        <li>
+            <a href="{{ xpath.get_absolute_url_update }}">{{ xpath.section_name }}</a>
+            <ul>
+                <li>url: {{ xpath.xpath_url }}</li>
+                <li>method: {{ xpath.xpath_method }}</li>
+            </ul>
+        </li>
+    {% endfor %}
+{% endif %}
+    {% if url %}
+        <h3>Url:</h3>
+    <p>{{ url.url_name }}</p>
+{% endif %}
+    </article>
+    <aside>
+<nav>
+        <ul>
+            <li>
+                <a href="{% url 'index' %}">Parsers</a>
+            </li>
+            <li>
+                <a href="/accounts/login/">Logout</a>
+            </li>
+            <li>{{ user.get_username}}</li>
+        </ul>
+    </nav>
+{% for res in results %}
+    <h3>{{ res.0 }}</h3>
+    {% if res.1 %}
+    {% for r in res.1 %}
+    <p>{{ r }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endfor %}
+
+    </aside>
+
+
+{% endblock %}

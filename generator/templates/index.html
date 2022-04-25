@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<article>
+<h1>List of parsers</h1>
+{% if parser_list %}
+    {% for parser in parser_list %}
+        <li><a href="{{ parser.get_absolute_url }}">{{ parser.parser_name }}</a></li>
+    {% endfor %}
+{% endif %}
+</article>
+
+<aside>
+    <nav>
+        <ul>
+            <li>
+                {% block button %}{% endblock %}
+            </li>
+            <li>
+                <a href="/accounts/login/">Logout</a>
+            </li>
+            <li>{{ user.get_username}}</li>
+        </ul>
+    </nav>
+    {% block parser_instruction %}
+
+        {% endblock %}
+</aside>
+
+
+{% endblock %}
