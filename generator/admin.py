@@ -12,13 +12,13 @@ class UrlInline(admin.TabularInline):
 
 @admin.register(Parser)
 class ParserAdmin(admin.ModelAdmin):
-    list_display = ('parser_name', 'parser_id', 'author')
+    list_display = ('parser_name', 'id', 'author')
     inlines = [XPathInline, UrlInline]
 
 
 @admin.register(XPath)
 class XPathAdmin(admin.ModelAdmin):
-    list_display = ('section_name', 'xpath_url', 'xpath_method', 'parser')
+    list_display = ('section_name', 'xpath_url', 'xpath_method', 'parser', 'id')
 
 
 @admin.register(Url)

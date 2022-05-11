@@ -5,34 +5,8 @@
 {% endblock %}
 
 {% block parser_instruction %}
-    <pre><code>
-{
-  "instruction": {
-{% for xpath in xpaths %}
-    "{{ xpath.section_name }}": {
-
-      "function": "{{ xpath.xpath_method }}",
-      "xpath": [
-        "{{xpath.xpath_url}}"
-      ]
-    },
-{% endfor %}
-  "metadata": {
-    "org_type": "media",
-    "parser_author": "author",
-    "parser_name": "sm_test",
-    "site_publisher": "",
-    "source": "",
-    "topic_en": "everything"
-  },
-  "parse": {
-    "index": "md_thematic",
-    "link": "{{ url.url_name}}",
-    "parser_type": "sitemap",
-    "start_page": [
-      "https://dtf.ru/robots.txt"
-    ]
-  }
-}
+<pre><code>{{ instruction }}
     </code></pre>
+<a href="{{ parser.get_absolute_url_delete}}">Delete</a>
+<a href="{{ parser.get_absolute_url_download }}">Save</a>
 {% endblock %}
