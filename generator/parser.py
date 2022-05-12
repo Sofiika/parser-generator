@@ -94,7 +94,8 @@ class ParserGenerator:
                 try:
                     parsed_text.append(tree.xpath(bytes(xpath['xpath'], 'utf-8').decode("unicode_escape")))
                 except:
-                    parsed_text.append('xpath ' + xpath['xpath'] + ' incorrect')
+                    txt = ['xpath incorrect']
+                    parsed_text.append(txt)
             tmp = [xpath['name'], parsed_text]
             results.append(tmp)
 

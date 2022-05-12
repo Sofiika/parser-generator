@@ -5,10 +5,11 @@ from .models import Parser, XPath, Url
 from django.views.generic.edit import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .parser import ParserGenerator
-from .forms import XPathForm, ParserForm, UrlForm
+from .forms import XPathForm, ParserForm, UrlForm, XPathGenerateForm
 import mimetypes
 from django.http.response import HttpResponse
 from django.conf import settings
+from django import forms
 
 
 # Представление главной страницы приложения
@@ -84,8 +85,52 @@ def xpath_create(request, pk):
     if request.method == 'POST':
         form = XPathForm(request.POST, instance=xpath)
         if form.is_valid():
-            form.save()
-            return redirect('parser-info', parser.id)
+            xpath_instance = form.save()
+
+            if 'generate' in request.POST:
+                return redirect('xpath-generate', xpath_instance.id)
+            else:
+                return redirect('parser-info', parser.id)
+        else:
+            form = XPathForm(instance=xpath)
+
+    return render(request, 'xpath_form.html', {'form': form})
+
+
+def xpath_generate(request, pk):
+    # Создание XPath и добавление его к парсеру по внешнему ключу
+    xpath = XPath.objects.get(pk=pk)
+    form = XPathGenerateForm(instance=xpath)
+
+    # Если форма сохраняется, то идет проверка на заполненность всех полей
+    if request.method == 'POST':
+        form = XPathGenerateForm(request.POST, instance=xpath)
+        if form.is_valid():
+            xpath_instance = form.save(commit=False)
+            string = "//div[@class=\"" + xpath_instance.xpath_class + "\"]/" + xpath_instance.xpath_additions + "text()"
+            xpath_instance.xpath_url = string
+            xpath_instance.save()
+
+            return redirect('xpath-update', xpath_instance.id)
+        else:
+            form = XPathGenerateForm(instance=xpath)
+
+    return render(request, 'xpath_generate_form.html', {'form': form})
+
+
+def xpath_update(request, pk):
+    xpath = XPath.objects.get(pk=pk)
+    form = XPathForm(instance=xpath)
+
+    if request.method == 'POST':
+        form = XPathForm(request.POST, instance=xpath)
+        if form.is_valid():
+            xpath_instance = form.save()
+
+            if 'generate' in request.POST:
+                return redirect('xpath-generate', xpath_instance.id)
+            else:
+                return redirect('parser-info', xpath_instance.parser.id)
         else:
             form = XPathForm(instance=xpath)
 
@@ -94,8 +139,11 @@ def xpath_create(request, pk):
 
 # Представление для обновления XPath
 class XPathUpdate(UpdateView):
+    xpath_class = forms.CharField(required=False)
+    xpath_additions = forms.CharField(required=False)
+
     model = XPath
-    fields = ['section_name', 'xpath_url', 'xpath_method']
+    fields = ['section_name', 'xpath_url', 'xpath_method', 'xpath_class', 'xpath_additions']
 
 
 # Представление для удаления XPath

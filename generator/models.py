@@ -17,10 +17,10 @@ class XPath(models.Model):
         ("text_array_from_string", "process_text_array_from_string"),
     )
     section_name = models.TextField(null=True, default='section 1')  # Название раздела для пользователя
-    xpath_url = models.TextField()  # Формула XPath
-    xpath_method = models.CharField(max_length=22, choices=LOAN_METHOD, default="article_text") # Метод обработки XPath
-    xpath_class = models.TextField(default='section')
-    xpath_additions = models.TextField(default='')
+    xpath_url = models.TextField(null=True, default='')  # Формула XPath
+    xpath_method = models.CharField(max_length=22, choices=LOAN_METHOD, default="article_text")  # Метод обработки XPath
+    xpath_class = models.TextField(default='section', null=True)
+    xpath_additions = models.TextField(default='', null=True)
     parser = models.ForeignKey('Parser', to_field='id', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
