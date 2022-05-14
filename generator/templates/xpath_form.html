@@ -5,8 +5,9 @@
 <form action="" method="post">
     {% csrf_token %}
     <table>
-        <tr><td>Section name:</td><td>{{ form.section_name }}</td></tr>
+        <tr><td>Section name:</td><td>{{ form.section_name }} {{ form.section_name.help_text | safe}}</td></tr>
         <tr><td>XPath formula:</td><td>{{ form.xpath_url }}</td><td><input type="submit" name="generate" value="Generate XPath" /></td>
+            <tr><td>Method:</td><td>{{ form.xpath_method }}</td></tr>
     </tr>
     </table>
     <input type="submit" value="Submit" />

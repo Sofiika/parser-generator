@@ -1,0 +1,30 @@
+<!-- Страница регистрации пользователя -->
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <article>
+        <h1>Create an account</h1>
+        <p>Please, sign up using the following form:</p>
+
+        <!-- Форма для создания аккаунта -->
+        <form action="." method="post">
+            <table>
+                <tr>
+                    <td><b>Username: </b></td>
+                    <td>{{ user_form.username }}</td>
+                </tr>
+                <tr>
+                    <td><b>Password: </b></td>
+                    <td>{{ user_form.password }}</td>
+                </tr>
+                <tr>
+                    <td><b>Repeat password: </b></td>
+                    <td>{{ user_form.password2 }}</td>
+                </tr>
+            </table>
+            {% csrf_token %}
+            <p><input type="submit" value="Create my account"></p>
+        </form>
+    </article>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-
+<article>
 {% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -31,10 +31,12 @@
 </table>
 
 <input type="submit" value="login" />
+
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
+<p><a href="{% url 'register' %}">Sign up</a></p>
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-
+</article>
 {% endblock %}

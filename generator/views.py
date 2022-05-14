@@ -9,12 +9,42 @@ from .forms import XPathForm, ParserForm, UrlForm, XPathGenerateForm
 import mimetypes
 from django.http.response import HttpResponse
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import UserRegistrationForm
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+import textwrap
 from django import forms
 
 
+# region main pages
+
+# Представление для регистрации
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Создание пользователя без сохранения в базе
+            new_user = user_form.save(commit=False)
+
+            # Установка пароля и сохранения
+            new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+
+            return render(request, 'account/register_done.html', {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'account/register.html', {'user_form': user_form})
+
+
 # Представление главной страницы приложения
+@login_required
 def index(request):
-    parser_list = Parser.objects.all()  # список всех парсеров пользователя
+    parser_list = Parser.objects.filter(author=request.user)  # список всех парсеров пользователя
 
     return render(
         request,
@@ -24,8 +54,9 @@ def index(request):
 
 
 # Представление для вывода инструкции парсера пользователю
+@login_required
 def parser_detail_view(request, pk):
-    parser_list = Parser.objects.all()  # список всех парсеров пользователя
+    parser_list = Parser.objects.filter(author=request.user)  # список всех парсеров пользователя
 
     # Поиск парсера с нужным id
     try:
@@ -49,6 +80,7 @@ def parser_detail_view(request, pk):
 
 
 # Представление для редактирования парсера и вывода результата парсинга
+@login_required
 def parser_info_view(request, pk):
     # Поиск парсера по id
     try:
@@ -71,9 +103,12 @@ def parser_info_view(request, pk):
     )
 
 
+# endregion
+
 # region XPath CRUD
 
 # Представление для добавления XPath в парсер
+@login_required
 def xpath_create(request, pk):
     # Создание XPath и добавление его к парсеру по внешнему ключу
     xpath = XPathForm().instance
@@ -87,6 +122,7 @@ def xpath_create(request, pk):
         if form.is_valid():
             xpath_instance = form.save()
 
+            # Выбор страницы для перехода в зависимости от нажатой кнопки
             if 'generate' in request.POST:
                 return redirect('xpath-generate', xpath_instance.id)
             else:
@@ -97,8 +133,10 @@ def xpath_create(request, pk):
     return render(request, 'xpath_form.html', {'form': form})
 
 
+# Представление для генерации XPath
+@login_required
 def xpath_generate(request, pk):
-    # Создание XPath и добавление его к парсеру по внешнему ключу
+    # Поиск XPath по ключу
     xpath = XPath.objects.get(pk=pk)
     form = XPathGenerateForm(instance=xpath)
 
@@ -106,9 +144,25 @@ def xpath_generate(request, pk):
     if request.method == 'POST':
         form = XPathGenerateForm(request.POST, instance=xpath)
         if form.is_valid():
+
+            # Создание XPath без сохранения
             xpath_instance = form.save(commit=False)
-            string = "//div[@class=\"" + xpath_instance.xpath_class + "\"]/" + xpath_instance.xpath_additions + "text()"
+
+            # Формирование формулы XPath по полям, заполненным пользователем
+            string = "//*[@class=\"" + xpath_instance.xpath_class + "\"]/" + xpath_instance.xpath_additions
+            match xpath_instance.xpath_method:
+                case 'article_text':
+                    string += '//text()'
+                case 'singular_item':
+                    string = "(//*[@class=\"" + xpath_instance.xpath_class + "\"])[1]/" + \
+                             xpath_instance.xpath_additions + '[1]//text()'
+                case 'external_links':
+                    string += '/@href'
+                case 'array_item':
+                    string += '//text()'
             xpath_instance.xpath_url = string
+            xpath_instance.xpath_class = ''
+            xpath_instance.xpath_additions = ''
             xpath_instance.save()
 
             return redirect('xpath-update', xpath_instance.id)
@@ -118,15 +172,20 @@ def xpath_generate(request, pk):
     return render(request, 'xpath_generate_form.html', {'form': form})
 
 
+# Представление для обновления XPath
+@login_required
 def xpath_update(request, pk):
+    # Поиск XPath по ключу
     xpath = XPath.objects.get(pk=pk)
     form = XPathForm(instance=xpath)
 
+    # Если форма сохраняется, то идет проверка на заполненность всех полей
     if request.method == 'POST':
         form = XPathForm(request.POST, instance=xpath)
         if form.is_valid():
             xpath_instance = form.save()
 
+            # Выбор страницы для перехода в зависимости от нажатой кнопки
             if 'generate' in request.POST:
                 return redirect('xpath-generate', xpath_instance.id)
             else:
@@ -134,20 +193,11 @@ def xpath_update(request, pk):
         else:
             form = XPathForm(instance=xpath)
 
-    return render(request, 'xpath_form.html', {'form': form})
-
-
-# Представление для обновления XPath
-class XPathUpdate(UpdateView):
-    xpath_class = forms.CharField(required=False)
-    xpath_additions = forms.CharField(required=False)
-
-    model = XPath
-    fields = ['section_name', 'xpath_url', 'xpath_method', 'xpath_class', 'xpath_additions']
+    return render(request, 'xpath_form.html', {'form': form, 'xpath': xpath})
 
 
 # Представление для удаления XPath
-class XPathDelete(DeleteView):
+class XPathDelete(LoginRequiredMixin, DeleteView):
     model = XPath
 
     # Возвращение на страницу редактирования парсера после удаления
@@ -161,6 +211,7 @@ class XPathDelete(DeleteView):
 # region Url CRUD
 
 # Представление для добавления Url в парсер
+@login_required
 def url_create(request, pk):
     # Создание Url и добавление его к парсеру по внешнему ключу
     url = UrlForm().instance
@@ -181,13 +232,13 @@ def url_create(request, pk):
 
 
 # Представление для обновления ссылки на сайт
-class UrlUpdate(UpdateView):
+class UrlUpdate(LoginRequiredMixin, UpdateView):
     model = Url
     fields = ['url_name']
 
 
 # Представление для удаления ссылки на сайт
-class UrlDelete(DeleteView):
+class UrlDelete(LoginRequiredMixin, DeleteView):
     model = Url
 
     # Возвращение на страницу редактирования парсера после удаления
@@ -201,7 +252,7 @@ class UrlDelete(DeleteView):
 # region Parser CRUD
 
 # Представление для удаления парсера
-class ParserDelete(DeleteView):
+class ParserDelete(LoginRequiredMixin, DeleteView):
     model = Parser
 
     def get_success_url(self):
@@ -209,6 +260,7 @@ class ParserDelete(DeleteView):
 
 
 # Представление для создания парсера
+@login_required
 def parser_create(request):
     # Создание форм для парсера и Xpath и ссылки на сайт, связанных с создаваемым парсером
     parser_form = ParserForm(request.POST or None)
@@ -250,6 +302,7 @@ def parser_create(request):
 # region Downloads
 
 # Запрос для скачивания инструкции парсера
+@login_required
 def download_instruction(request, pk):
     # Добавление имени файла
     filename = 'instruction.json'
@@ -276,6 +329,7 @@ def download_instruction(request, pk):
 
 
 # Запрос для скачивания результата парсинга в формате txt
+@login_required
 def download_text(request, pk):
     # Добавление имени файла
     filename = 'result.txt'
@@ -299,18 +353,93 @@ def download_text(request, pk):
     instruction = ParserGenerator.get_instruction(xpaths, url, parser_id)
     res = ParserGenerator.parse_instruction(instruction)
 
-    # Сбор результата парсинга в один список
-    lines = []
+    # Сбор результата парсинга в одну строку
+    line = ""
     for r in res:
-        lines.append(r[0] + "\n")
+        line += r[0] + "\n"
         for r1 in r[1]:
             for r2 in r1:
-                lines.append(r2 + "\n")
-        lines.append("=======================================================\n")
+
+                # Если метод article_text, то текст записывается в одну строку
+                if r[2] == 'article_text':
+
+                    line += r2 + " "
+                else:
+                    line += r2 + "\n"
+
+        # Линия для разделения результатов парсинга от разных XPath'ов
+        line += "\n=======================================================\n"
 
     # Запись полученного списка в файл
-    response.writelines(lines)
+    response.writelines(line)
 
     return response
+
+
+# Запрос для скачивания результата парсинга в формате pdf
+@login_required
+def download_pdf_text(request, pk):
+    # Создание буфера и канваса
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+
+    # Создание объекта для записи текста
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont('Helvetica', 14)
+
+    # Поиск парсера с нужным id
+    try:
+        parser_id = Parser.objects.get(pk=pk)
+    except:
+        raise Http404("Parser does not exist")
+
+    # Поиск XPath и ссылок на сайты, связанных с данным парсером
+    xpaths = XPath.objects.filter(parser_id=parser_id)
+    url = Url.objects.filter(parser_id=parser_id)
+
+    # Получение результата парсинга
+    instruction = ParserGenerator.get_instruction(xpaths, url, parser_id)
+    res = ParserGenerator.parse_instruction(instruction)
+
+    # Сбор результата парсинга в один список
+    line = ""
+    for r in res:
+        line += r[0] + "\n"
+        for r1 in r[1]:
+            for r2 in r1:
+
+                # Если метод article_text, то текст записывается в одну строку
+                if r[2] == 'article_text':
+                    line += r2 + " "
+                else:
+                    line += r2 + "\n"
+
+        # Линия для разделения результатов парсинга от разных XPath'ов
+        line += "\n=======================================================\n"
+
+    # Разделение текста на несколько строк
+    w = textwrap.TextWrapper(width=80, break_long_words=False, replace_whitespace=False)
+    wrapped_text = '\n'.join(w.wrap(line))
+    lines = wrapped_text.split('\n')
+
+    # Разделение текста на несколько страниц
+    for i in range((len(lines)-1)//42 + 1):
+        for j in range(42):
+            if (i*42 + j + 1) < len(lines):
+                textob.textLine(lines[i*42 + j])
+            else:
+                break
+        c.drawText(textob)
+        c.showPage()
+        textob = c.beginText()
+        textob.setTextOrigin(inch, inch)
+        textob.setFont('Helvetica', 14)
+
+    # Сохранение полученного файла и очистка буфера
+    c.save()
+    buf.seek(0)
+
+    return FileResponse(buf, as_attachment=True, filename='result.pdf')
 
 # endregion

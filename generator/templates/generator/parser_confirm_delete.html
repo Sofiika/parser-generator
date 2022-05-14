@@ -1,14 +1,16 @@
+<!-- Страница подтверждения удаления парсера -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
-<article>
-<h1>Delete Parser</h1>
+    <article>
+        <h1>Delete Parser</h1>
+        <p>Are you sure you want to delete the parser?</p>
 
-<p>Are you sure you want to delete the parser?</p>
-
-<form action="" method="POST">
-  {% csrf_token %}
-  <input type="submit" value="Yes, delete." />
-</form>
-</article>
+        <!-- Форма с кнопкой подтверждения удаления -->
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Yes, delete." />
+        </form>
+    </article>
 {% endblock %}

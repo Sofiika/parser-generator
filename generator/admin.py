@@ -2,6 +2,8 @@ from django.contrib import admin
 from .models import Parser, XPath, Url
 
 
+# Классы для удобного управления панелью администратора
+
 class XPathInline(admin.TabularInline):
     model = XPath
 

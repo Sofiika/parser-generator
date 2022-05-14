@@ -7,8 +7,8 @@
     {% for parser in parser_list %}
         <li><a href="{{ parser.get_absolute_url }}">{{ parser.parser_name }}</a></li>
     {% endfor %}
-    <a href="{% url 'parser-create' %}">Add parser</a>
 {% endif %}
+<a href="{% url 'parser-create' %}">Add parser</a>
 </article>
 
 <aside>
@@ -18,7 +18,7 @@
                 {% block button %}{% endblock %}
             </li>
             <li>
-                <a href="/accounts/login/">Logout</a>
+                <a href="/accounts/logout/">Logout</a>
             </li>
             <li>{{ user.get_username}}</li>
         </ul>

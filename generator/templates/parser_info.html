@@ -33,20 +33,25 @@
                 <a href="{% url 'index' %}">Parsers</a>
             </li>
             <li>
-                <a href="/accounts/login/">Logout</a>
+                <a href="/accounts/logout/">Logout</a>
             </li>
             <li>{{ user.get_username}}</li>
         </ul>
     </nav>
-    <a href="{{ parser.get_absolute_url_download_text}}">Save</a>
+    <a href="{{ parser.get_absolute_url_download_text}}">Download txt</a>
+    <a href="{{ parser.get_absolute_url_download_pdf_text}}">Download pdf</a>
 {% for res in results %}
     <h3>{{ res.0 }}</h3>
-    {% if res.1 %}
+    {% if res.1 %}<p>
     {% for rr in res.1 %}
         {% for r in rr %}
-    <p>{{ r }}</p>
+{% if res.2 == 'article_text' %}
+    {{ r }}
+            {% else %}
+    {{ r }}</p><p>
+            {% endif %}
         {% endfor %}
-        {% endfor %}
+    {% endfor %}</p>
     {% endif %}
     {% endfor %}
     </aside>
