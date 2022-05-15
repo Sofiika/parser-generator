@@ -1,3 +1,5 @@
+<!-- Страница с инструкцией парсера  -->
+
 {% extends "index.html" %}
 
 {% block button %}
@@ -5,8 +7,21 @@
 {% endblock %}
 
 {% block parser_instruction %}
-<pre><code>{{ instruction }}
-    </code></pre>
-<a href="{{ parser.get_absolute_url_delete}}">Delete</a>
-<a href="{{ parser.get_absolute_url_download }}">Save</a>
+    <table>
+        <tr >
+            <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                <h3>&nbsp;<a href="{{ parser.get_absolute_url_delete}}" style="color: #A2D9CE">
+                    Delete parser
+                </a>&nbsp;</h3>
+            </td>
+            <td></td>
+            <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                <h3>&nbsp;<a href="{{ parser.get_absolute_url_download }}" style="color: #A2D9CE">
+                    Download parser
+                </a>&nbsp;</h3>
+            </td>
+        </tr>
+    </table>
+
+    <pre><code>{{ instruction }}</code></pre>
 {% endblock %}

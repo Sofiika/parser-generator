@@ -1,27 +1,52 @@
+<!-- Страница с формой для создания парсера  -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
-<article>
-<form action="" method="post">
+    <article>
+        <form action="" method="post">
             {% csrf_token %}
             <table>
-                <tr>{{ parser_form.as_table }}</tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <th></th>
-                <th>XPath</th>
-                <th></th>
-                <tr>{{ xpath_form.as_table }}</tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <th></th>
-                <th>URL</th>
-                <th></th>
-                <tr>{{ url_form.as_table }}</tr>
+                <!-- Информация о парсере (имя)  -->
+                <tr>
+                    <td><b>Parser name: </b></td>
+                    <td>{{ parser_form.parser_name }}</td>
+                    <td>{{ parser_form.parser_name.help_text | safe}}</td>
+                </tr>
+                <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+
+                <!-- Информация о XPath (имя, формула, метод)  -->
+                <th></th><th>XPath</th><th></th>
+
+                <tr>
+                    <td><b>Section name: </b></td>
+                    <td>{{ xpath_form.section_name }}</td>
+                    <td>{{ xpath_form.section_name.help_text | safe}}</td>
+                </tr>
+                <tr>
+                    <td><b>XPath formula: </b></td>
+                    <td>{{ xpath_form.xpath_url }}</td>
+                    <td>{{ xpath_form.xpath_url.help_text | safe}}</td>
+                </tr>
+                <tr>
+                    <td><b>Method: </b></td>
+                    <td>{{ xpath_form.xpath_method }}</td>
+                    <td>{{ xpath_form.xpath_method.help_text | safe}}</td>
+                </tr>
+
+                <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+
+                <!-- Информация о ссылке (сама ссылка)  -->
+                <th></th><th>URL</th><th></th>
+
+                <tr>
+                    <td><b>URL name: </b></td>
+                    <td>{{ url_form.url_name }}</td>
+                    <td>{{ url_form.url_name.help_text | safe}}</td>
+                </tr>
             </table>
+            <br><br>
             <input type="submit" value="Add parser" class="submit" />
         </form>
-</article>
+    </article>
 {% endblock %}

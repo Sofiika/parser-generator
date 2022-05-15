@@ -7,23 +7,21 @@ html, body {
 
 html {
   font-size: 20px;
-  background-color: #a9a9a9;
+  background-color: #A2D9CE;
 }
 
 body {
-  width: 97%;
+  width: 98%;
   margin: 0 auto;
 }
 
 /* || typography */
 
 h1, h2, h3 {
-  /*font-family: 'Sonsie One', cursive;*/
   color: #2a2a2a;
 }
 
 p, input, li {
-  /*font-family: 'Open Sans Condensed', sans-serif*/;
   color: #2a2a2a;
 }
 
@@ -33,12 +31,11 @@ h1 {
 }
 
 h2 {
-  font-size: 3rem;
-  text-align: center;
+  font-size: 1.6rem;
 }
 
 h3 {
-  font-size: 2.2rem;
+  font-size: 1.2rem;
 }
 
 p, li {
@@ -49,13 +46,13 @@ p, li {
 /* || header layout */
 
 nav, article, aside, footer {
-  background-color: white;
+  background-color: #F4F6F6;
   padding: 1%;
 }
 
 nav {
-  height: 50px;
-  background-color: aliceblue;
+  height: 70px;
+  background-color: #117A65;
   display: flex;
   margin-bottom: 10px;
 }
@@ -72,14 +69,15 @@ nav li {
   display: inline;
   text-align: center;
   flex: 1;
+  color: #D1F2EB;
 }
 
 nav a {
-  display: inline-block;
-  font-size: 2rem;
-  /*text-transform: uppercase;*/
+  display: inline;
   text-decoration: none;
-  color: black;
+  background: #45B39D;
+  color: #D6EAF8;
+  padding: 4%;
 }
 
 nav form {
@@ -88,6 +86,12 @@ nav form {
   align-items: center;
   height: 100%;
   padding: 0 2em;
+}
+
+select {
+  font-size: 1rem;
+  height: 50px;
+  width: 700px;
 }
 
 input {
@@ -103,9 +107,9 @@ input[type="search"] {
 input[type="submit"] {
   flex: 1;
   margin-left: 1rem;
-  background: #333;
+  background: #117A65;
   border: 0;
-  color: white;
+  color: #D6EAF8;
   width: 250px;
 }
 
@@ -128,7 +132,7 @@ article {
 aside {
   flex: 3;
   margin-left: 10px;
-  background-color: aliceblue;
+  background-color: #EBF5FB;
 }
 
 aside li {
@@ -138,6 +142,13 @@ aside li {
 footer {
   margin-top: 10px;
 }
+
+a {
+  display: inline;
+  text-decoration: none;
+  color: #117A65;
+}
+
 
 /* || tooltip */
 
@@ -151,7 +162,7 @@ footer {
   visibility: hidden;
   width: 120px;
   background-color: black;
-  color: #fff;
+  color: #D0ECE7;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;

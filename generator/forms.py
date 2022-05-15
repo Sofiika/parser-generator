@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 
 # Форма для XPath
 class XPathForm(forms.ModelForm):
+    section_name = forms.CharField(help_text=XPath._meta.get_field('section_name').help_text)
     xpath_url = forms.CharField(required=False, help_text=XPath._meta.get_field('xpath_url').help_text)
+    xpath_method = forms.ChoiceField(help_text=XPath._meta.get_field('xpath_method').help_text,
+                                     choices=XPath.LOAN_METHOD)
 
     class Meta:
         model = XPath
@@ -14,7 +17,10 @@ class XPathForm(forms.ModelForm):
 
 # Форма для генерации XPath
 class XPathGenerateForm(forms.ModelForm):
-    xpath_additions = forms.CharField(required=False)
+    xpath_method = forms.ChoiceField(help_text=XPath._meta.get_field('xpath_method').help_text,
+                                     choices=XPath.LOAN_METHOD)
+    xpath_class = forms.CharField(help_text=XPath._meta.get_field('xpath_class').help_text)
+    xpath_additions = forms.CharField(required=False, help_text=XPath._meta.get_field('xpath_additions').help_text)
 
     class Meta:
         model = XPath
@@ -23,6 +29,8 @@ class XPathGenerateForm(forms.ModelForm):
 
 # Форма для парсера
 class ParserForm(forms.ModelForm):
+    parser_name = forms.CharField(help_text=Parser._meta.get_field('parser_name').help_text)
+
     class Meta:
         model = Parser
         fields = ['parser_name']

@@ -1,18 +1,30 @@
+<!-- Страница с формой для генерации XPath -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
-<article>
-<form action="" method="post">
-    {% csrf_token %}
-    <table>
-        <tr><td>Class name:</td><td>{{ form.xpath_class }}</td></tr>
-        <tr><td>Additions:</td><td>{{ form.xpath_additions }}</td>
-    </tr>
-        <tr><td>Method:</td><td>{{ form.xpath_method }}</td>
-    </tr>
-    </table>
-    <input type="submit" value="Submit" />
-
-</form>
-</article>
+    <article>
+        <form action="" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td><b>Class name:</b></td>
+                    <td>{{ form.xpath_class }}</td>
+                    <td>{{ form.xpath_class.help_text | safe}}</td>
+                </tr>
+                <tr>
+                    <td><b>Additions:</b></td>
+                    <td>{{ form.xpath_additions }}</td>
+                    <td>{{ form.xpath_additions.help_text | safe}}</td>
+                </tr>
+                <tr>
+                    <td><b>Method:</b></td>
+                    <td>{{ form.xpath_method }}</td>
+                    <td>{{ form.xpath_method.help_text | safe}}</td>
+                </tr>
+            </table>
+            <br><br>
+            <input type="submit" value="Create formula" />
+        </form>
+    </article>
 {% endblock %}

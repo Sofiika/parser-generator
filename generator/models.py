@@ -19,10 +19,17 @@ class XPath(models.Model):
     # Формула XPath
     xpath_url = models.TextField(null=True, default='',
                                  help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter XPath formula</span></span>")
-    xpath_method = models.CharField(max_length=22, choices=LOAN_METHOD, default="article_text")  # Метод обработки XPath
-    xpath_class = models.TextField(default='', null=True)  # Класс XPath (используется для генерации)
-    xpath_additions = models.TextField(default='', null=True)  # Добавления XPath (используется для генерации)
-    parser = models.ForeignKey('Parser', to_field='id', on_delete=models.CASCADE, null=True) # Парсер, привзянный к XPath
+    # Метод обработки XPath
+    xpath_method = models.CharField(max_length=22, choices=LOAN_METHOD, default="article_text",
+                                    help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Select XPath processing method</span></span>")
+    # Класс XPath (используется для генерации)
+    xpath_class = models.TextField(default='', null=True,
+                                   help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter html class</span></span>")
+    # Добавления XPath (используется для генерации)
+    xpath_additions = models.TextField(default='', null=True,
+                                       help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter html path from class to element</span></span>")
+    # Парсер, привзянный к XPath
+    parser = models.ForeignKey('Parser', to_field='id', on_delete=models.CASCADE, null=True)
 
     # Строка для краткого представления XPath
     def __str__(self):
@@ -43,8 +50,10 @@ class XPath(models.Model):
 
 # Модель ссылки на сайт
 class Url(models.Model):
-    url_name = models.TextField(help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter link to website</span></span>")  # Ссылка на сайт
-    parser = models.ForeignKey('Parser', to_field='id', on_delete=models.CASCADE, null=True)  # Парсер, привязанный к ссылке
+    # Ссылка на сайт
+    url_name = models.TextField(help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter link to website</span></span>")
+    # Парсер, привязанный к ссылке
+    parser = models.ForeignKey('Parser', to_field='id', on_delete=models.CASCADE, null=True)
 
     # Строка для краткого представления ссылки
     def __str__(self):
@@ -65,7 +74,9 @@ class Url(models.Model):
 
 # Модель парсера
 class Parser(models.Model):
-    parser_name = models.TextField(null=True)  # Имя парсера
+    # Имя парсера
+    parser_name = models.TextField(null=True,
+                                   help_text="<span class=\"tooltip\">?<span class=\"tooltiptext\">Enter parser name</span></span>")
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)  # id парсера
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Автор парсера
 

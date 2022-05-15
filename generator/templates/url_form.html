@@ -1,13 +1,30 @@
+<!-- Страница с формой для добавления ссылки на сайт -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
+    <article>
+        <form action="" method="post">
+            {% csrf_token %}
 
-<form action="" method="post">
-    {% csrf_token %}
-    <table>
-    {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit" />
+            <!-- Форма url в виде таблицы -->
+            <table>
+                <tr>
+                    <td>
+                        <b>URL:&nbsp;</b>
+                    </td>
+                    <td>
+                        {{ form.url_name }} &nbsp;
+                    </td>
+                    <td>
+                        {{ form.url_name.help_text | safe}}
+                    </td>
+                </tr>
+            </table>
 
-</form>
+            <br><br>
+            <!-- Кнопка подтверждения удаления -->
+            <input type="submit" value="Add" />
+        </form>
+    </article>
 {% endblock %}

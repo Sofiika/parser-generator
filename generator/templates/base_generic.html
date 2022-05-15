@@ -1,19 +1,24 @@
+<!-- Шаблон, используемый во всех страницах приложения -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {% block title %}<title>Parsers generator</title>{% endblock %}
-  <meta charset="utf-8">
-  <meta name="viewport" content="parser generator">
-<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Sonsie+One" rel="stylesheet" type="text/css">
-    <!--<link rel="stylesheet" href="../static/css/styles.css">-->
-  <!-- Добавление дополнительного статического CSS файла -->
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block title %}
+        <title>Parsers generator</title>
+    {% endblock %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="parser generator">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Sonsie+One" rel="stylesheet" type="text/css">
+
+    <!-- Добавление дополнительного статического CSS файла -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 
 <body>
     <main>
-    {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
     </main>
 </body>
 </html>

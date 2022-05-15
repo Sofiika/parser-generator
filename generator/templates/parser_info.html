@@ -1,60 +1,123 @@
+<!-- Страница с деталями о парсере и результатом парсинга  -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
     <article>
-    <h3>XPaths:</h3>
-    {% if xpaths %}
-    {% for xpath in xpaths %}
-        <li>
-            <a href="{{ xpath.get_absolute_url_update }}">{{ xpath.section_name }}</a>
-            <ul>
-                <li>url: {{ xpath.xpath_url }}</li>
-                <li>method: {{ xpath.xpath_method }}</li>
-                <li><a href="{{ xpath.get_absolute_url_delete }}">Delete XPath</a></li>
-            </ul>
-        </li>
-    {% endfor %}
-{% endif %}
-        <a href="{{ parser.get_absolute_url_add_xpath }}">Add XPath</a>
-    <h3>Url:</h3>
-    {% if urls %}
-        {% for url in urls %}
-    <p><a href="{{ url.url_name }}">{{ url.url_name }}</a></p>
-            <a href="{{ url.get_absolute_url_update }}">Change URL</a> <a href="{{ url.get_absolute_url_delete }}">Delete URL</a>
-        {% endfor %}
-{% endif %}
-    <p><a href="{{ parser.get_absolute_url_add_url }}">Add URL</a></p>
+        <!-- Вывод всех XPath с основной информацией и ссылкой на редактирование  -->
+        <h2>XPaths:</h2>
+        {% if xpaths %}<ul>
+            {% for xpath in xpaths %}
+                <li>
+                    <a href="{{ xpath.get_absolute_url_update }}">{{ xpath.section_name }}</a>
+                    <ul>
+                        <li>url: {{ xpath.xpath_url }}</li>
+                        <li>method: {{ xpath.xpath_method }}</li>
+                    </ul>
+                    <!-- Кнопка для удаления XPath  -->
+                    <table>
+                        <tr>
+                            <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                                &nbsp;<a href="{{ xpath.get_absolute_url_delete }}" style="color: #A2D9CE; font-size: 1.2rem">
+                                    Delete XPath
+                                </a>&nbsp;
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+            {% endfor %}</ul>
+        {% endif %}
+        <br><br>
+        <!-- Кнопка для добавления XPath  -->
+        <table>
+            <tr>
+                <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                    <h3>&nbsp;<a href="{{ parser.get_absolute_url_add_xpath }}" style="color: #A2D9CE">
+                        Add XPath
+                    </a>&nbsp;</h3>
+                </td>
+            </tr>
+        </table>
 
+        <!-- Вывод всех ссылок  -->
+        <h2>URLs:</h2>
+        {% if urls %}
+            {% for url in urls %}
+                <p><a href="{{ url.url_name }}">{{ url.url_name }}</a></p>
+                <!-- Кнопки для изменения и удаления ссылок  -->
+                <table>
+                    <tr>
+                        <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                            &nbsp;<a href="{{ url.get_absolute_url_update }}" style="color: #A2D9CE; font-size: 1.2rem">
+                                Change URL
+                            </a>&nbsp;
+                        </td>
+
+                        <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                            &nbsp;<a href="{{ url.get_absolute_url_delete }}" style="color: #A2D9CE; font-size: 1.2rem">
+                                Delete URL
+                            </a>&nbsp;
+                        </td>
+                    </tr>
+                </table>
+            {% endfor %}
+        {% endif %}
+        <br><br>
+        <!-- Кнопка для добавления ссылки  -->
+        <table>
+            <tr>
+                <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                    <h3>&nbsp;<a href="{{ parser.get_absolute_url_add_url }}" style="color: #A2D9CE">
+                        Add URL
+                    </a>&nbsp;</h3>
+                </td>
+            </tr>
+        </table>
     </article>
+
     <aside>
-<nav>
-        <ul>
-            <li>
-                <a href="{% url 'index' %}">Parsers</a>
-            </li>
-            <li>
-                <a href="/accounts/logout/">Logout</a>
-            </li>
-            <li>{{ user.get_username}}</li>
-        </ul>
-    </nav>
-    <a href="{{ parser.get_absolute_url_download_text}}">Download txt</a>
-    <a href="{{ parser.get_absolute_url_download_pdf_text}}">Download pdf</a>
-{% for res in results %}
-    <h3>{{ res.0 }}</h3>
-    {% if res.1 %}<p>
-    {% for rr in res.1 %}
-        {% for r in rr %}
-{% if res.2 == 'article_text' %}
-    {{ r }}
-            {% else %}
-    {{ r }}</p><p>
+        <nav>
+            <ul>
+                <li>
+                    <a href="{% url 'index' %}">Parsers</a>
+                </li>
+                <li>
+                    <a href="/accounts/logout/">Logout</a>
+                </li>
+                <li>{{ user.get_username}}</li>
+            </ul>
+        </nav>
+
+        <!-- Кнопки для скачивания результата парсинга  -->
+        <table>
+            <tr>
+                <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                    &nbsp;<a href="{{ parser.get_absolute_url_download_text }}" style="color: #A2D9CE; font-size: 1.2rem">
+                        Download txt
+                    </a>&nbsp;
+                </td>
+
+                <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                    &nbsp;<a href="{{ parser.get_absolute_url_download_pdf_text }}" style="color: #A2D9CE; font-size: 1.2rem">
+                        Download pdf
+                    </a>&nbsp;
+                </td>
+            </tr>
+        </table>
+        <!-- Вывод результата парсинга для каждого XPath  -->
+        {% for res in results %}
+            <h2>{{ res.0 }}</h2>
+            {% if res.1 %}<p>
+                {% for rr in res.1 %}
+                    {% for r in rr %}
+                        {% if res.2 == 'article_text' %}
+                            {{ r }}
+                        {% else %}
+                            {{ r }}</p><p>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}</p>
             {% endif %}
         {% endfor %}
-    {% endfor %}</p>
-    {% endif %}
-    {% endfor %}
     </aside>
-
-
 {% endblock %}

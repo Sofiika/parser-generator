@@ -1,32 +1,44 @@
+<!-- Главная страница приложения  -->
+
 {% extends "base_generic.html" %}
 
 {% block content %}
-<article>
-<h1>List of parsers</h1>
-{% if parser_list %}
-    {% for parser in parser_list %}
-        <li><a href="{{ parser.get_absolute_url }}">{{ parser.parser_name }}</a></li>
-    {% endfor %}
-{% endif %}
-<a href="{% url 'parser-create' %}">Add parser</a>
-</article>
+    <article>
+        <h1>List of parsers</h1>
 
-<aside>
-    <nav>
-        <ul>
-            <li>
-                {% block button %}{% endblock %}
-            </li>
-            <li>
-                <a href="/accounts/logout/">Logout</a>
-            </li>
-            <li>{{ user.get_username}}</li>
-        </ul>
-    </nav>
-    {% block parser_instruction %}
+        <!-- Вывод всех названий парсера со ссылками  -->
+        {% if parser_list %}
+            {% for parser in parser_list %}
+                <li>
+                    <a href="{{ parser.get_absolute_url }}">{{ parser.parser_name }}</a>
+                </li>
+            {% endfor %}
+        {% endif %}
 
-        {% endblock %}
-</aside>
+        <br><br>
+        <table>
+            <tr>
+                <td style="border-radius: 5px; border: 1px solid black; background-color: #117A65">
+                    <h3>&nbsp;<a href="{% url 'parser-create' %}" style="color: #A2D9CE">
+                        Add parser
+                    </a>&nbsp;</h3>
+                </td>
+            </tr>
+        </table>
+    </article>
 
-
+    <aside>
+        <nav>
+            <ul>
+                <li>
+                    {% block button %}{% endblock %}
+                </li>
+                <li>
+                    <a href="/accounts/logout/">Logout</a>
+                </li>
+                <li>{{ user.get_username}}</li>
+            </ul>
+        </nav>
+        {% block parser_instruction %}{% endblock %}
+    </aside>
 {% endblock %}
