@@ -115,12 +115,13 @@ class ParserGenerator:
                     string = tree.xpath(bytes(xpath['xpath'], 'utf-8').decode("unicode_escape"))
                     string_strip = []
                     for s in string:
-                        string_strip.append(s.strip())
+                        string_strip.append(s.strip().replace('\n', ''))
                     if string_strip is not None:
                         parsed_text.append(string_strip)
                 except:
                     txt = ['xpath incorrect']
                     parsed_text.append(txt)
+                    break
             tmp = [xpath['name'], parsed_text, xpath['function']]
             results.append(tmp)
 

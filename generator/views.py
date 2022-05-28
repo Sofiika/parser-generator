@@ -419,7 +419,7 @@ def download_pdf_text(request, pk):
         line += "\n=======================================================\n"
 
     # Разделение текста на несколько строк
-    w = textwrap.TextWrapper(width=80, break_long_words=False, replace_whitespace=False)
+    w = textwrap.TextWrapper(width=75, break_long_words=True, replace_whitespace=False)
     wrapped_text = '\n'.join(w.wrap(line))
     lines = wrapped_text.split('\n')
 
